@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -11,14 +10,17 @@ import RoomGrid from "@/components/RoomGrid";
 
 const Explore = () => {
   const { isAuthenticated } = useAuth();
-  const { publicRooms, loading, refreshRooms } = useRoom();
+  const { publicRooms, refreshRooms } = useRoom();
   const [statusFilter, setStatusFilter] = useState<RoomStatus | "all">("all");
   const [tagFilter, setTagFilter] = useState<RoomTag | "all">("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const [isRefreshing, setIsRefreshing] = useState(false);
   
   useEffect(() => {
-    refreshRooms();
-  }, [refreshRooms]);
+    // Initial load of rooms
+    handleRefresh();
+    // Don't include handleRefresh in dependencies to avoid refresh loops
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Filter rooms based on selected filters
   const filteredRooms = publicRooms.filter((room) => {
@@ -36,8 +38,16 @@ const Explore = () => {
   const scheduledRooms = filteredRooms.filter(room => room.status === "scheduled");
   
   // Handle refresh
-  const handleRefresh = () => {
-    refreshRooms();
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    try {
+      await refreshRooms();
+    } finally {
+      // Ensure we always set refreshing to false, even if there's an error
+      setTimeout(() => {
+        setIsRefreshing(false);
+      }, 600); // Add a short delay to ensure UI feels responsive
+    }
   };
 
   return (
@@ -53,9 +63,9 @@ const Explore = () => {
           variant="outline"
           onClick={handleRefresh}
           className="mt-4 md:mt-0"
-          disabled={loading}
+          disabled={isRefreshing}
         >
-          {loading ? "Refreshing..." : "Refresh"}
+          {isRefreshing ? "Refreshing..." : "Refresh"}
         </Button>
       </div>
 
