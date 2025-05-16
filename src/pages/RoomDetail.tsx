@@ -8,13 +8,15 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useRoom } from "@/contexts/RoomContext";
 import { getTimeWindow, isRoomLive } from "@/lib/date-utils";
 import ChatBox from "@/components/ChatBox";
-import { Smile } from "lucide-react";
+import InviteToRoomForm from "@/components/InviteToRoomForm";
+import { Smile, UserPlus, Users } from "lucide-react";
 
 const EMOJI_OPTIONS = ["👍", "❤️", "😊", "🎉", "👏", "⚡️", "💡", "✨"];
 
 const RoomDetail = () => {
   const { roomId } = useParams<{ roomId: string }>();
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [showInviteForm, setShowInviteForm] = useState(false);
   
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -87,6 +89,11 @@ const RoomDetail = () => {
       navigate("/dashboard");
     }
   };
+
+  const handleInviteSuccess = () => {
+    setShowInviteForm(false);
+    refreshRooms();
+  };
   
   return (
     <div className="container py-8 px-4">
@@ -151,7 +158,8 @@ const RoomDetail = () => {
                   <h3 className="font-medium mb-1">Participants ({room.participants.length})</h3>
                   <div className="flex flex-wrap gap-2">
                     {room.participants.map((userId) => (
-                      <Badge key={userId} variant="secondary">
+                      <Badge key={userId} variant="secondary" className="flex items-center gap-1">
+                        <Users className="h-3 w-3 mr-1" />
                         {/* In a real app, we'd get usernames from the server */}
                         {userId === "1" ? "demo" : userId === "2" ? "jane" : userId === "3" ? "john" : `user-${userId}`}
                       </Badge>
@@ -167,7 +175,7 @@ const RoomDetail = () => {
                         room.invitedUsers.map((userId) => (
                           <Badge key={userId} variant="outline">
                             {/* In a real app, we'd get usernames from the server */}
-                            {userId === "1" ? "demo" : userId === "2" ? "jane" : userId === "3" ? "john" : `user-${userId}`}
+                            {userId === "1" ? "demo" : userId === "2" ? "jane" : userId === "3" ? "john" : userId}
                           </Badge>
                         ))
                       ) : (
@@ -175,6 +183,31 @@ const RoomDetail = () => {
                       )}
                     </div>
                   </div>
+                )}
+
+                {/* Invite users button - visible to room creator and participants */}
+                {(isRoomCreator || isParticipant) && (room.status !== 'closed') && (
+                  <Button 
+                    variant="outline" 
+                    className="w-full flex gap-2"
+                    onClick={() => setShowInviteForm(!showInviteForm)}
+                  >
+                    <UserPlus className="h-4 w-4" /> 
+                    {showInviteForm ? "Cancel Invite" : "Invite Others"}
+                  </Button>
+                )}
+
+                {/* Invite form - conditionally displayed */}
+                {showInviteForm && (
+                  <Card className="border border-dashed bg-muted/40">
+                    <CardContent className="p-4">
+                      <h3 className="font-medium mb-3">Invite by Email or Phone</h3>
+                      <InviteToRoomForm 
+                        roomId={roomId || ""} 
+                        onInviteSuccess={handleInviteSuccess} 
+                      />
+                    </CardContent>
+                  </Card>
                 )}
                 
                 {isLive && isParticipant && (

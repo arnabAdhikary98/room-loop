@@ -70,4 +70,5 @@ export interface RoomContextType {
   sendReaction: (roomId: string, emoji: string) => Promise<void>;
   getRoomById: (roomId: string) => Room | undefined;
   refreshRooms: () => Promise<void>;
+  inviteToRoom: (roomId: string, contacts: string[]) => Promise<void>;
 }

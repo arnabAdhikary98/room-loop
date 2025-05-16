@@ -1,4 +1,3 @@
-
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { Room, RoomStatus, RoomContextType } from '@/types';
@@ -416,6 +415,61 @@ export const RoomProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  // Add new function to invite users to a room
+  const inviteToRoom = async (roomId: string, contacts: string[]) => {
+    setLoading(true);
+    try {
+      if (!user) throw new Error("You must be logged in to invite users");
+      if (!contacts.length) throw new Error("No contacts to invite");
+
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 800));
+
+      const room = rooms.find(r => r.id === roomId);
+      if (!room) throw new Error("Room not found");
+
+      // Check if user has permission to invite
+      const isRoomCreator = room.createdBy === user.id;
+      const isRoomParticipant = room.participants.includes(user.id);
+      
+      if (!isRoomCreator && !isRoomParticipant) {
+        throw new Error("You don't have permission to invite users to this room");
+      }
+
+      // Add new invites (in a real app, this would send emails/texts)
+      // For now, we'll just add IDs to the invitedUsers array
+      // This is a simplified mock where we treat email/phone as user IDs
+      const updatedInvites = [...new Set([...room.invitedUsers, ...contacts])];
+
+      setRooms(prevRooms => 
+        prevRooms.map(r => 
+          r.id === roomId ? {
+            ...r,
+            invitedUsers: updatedInvites
+          } : r
+        )
+      );
+      
+      toast({
+        title: "Invites sent!",
+        description: `Successfully sent ${contacts.length} invitation${contacts.length > 1 ? 's' : ''}`,
+      });
+      
+      return;
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : "Failed to send invites";
+      setError(errorMessage);
+      toast({
+        title: "Error",
+        description: errorMessage,
+        variant: "destructive",
+      });
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <RoomContext.Provider
       value={{
@@ -433,6 +487,7 @@ export const RoomProvider = ({ children }: { children: ReactNode }) => {
         sendReaction,
         getRoomById,
         refreshRooms,
+        inviteToRoom,
       }}
     >
       {children}
