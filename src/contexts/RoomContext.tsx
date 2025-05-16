@@ -2,6 +2,8 @@ import { createContext, useContext, useState, useEffect, ReactNode } from 'react
 import { useToast } from '@/hooks/use-toast';
 import { Room, RoomStatus, RoomContextType } from '@/types';
 import { useAuth } from './AuthContext';
+import { sendNotification } from '@/lib/notification-service';
+import { formatDateTimeRangeForInvitation } from '@/lib/date-utils';
 
 // Mock data for rooms
 const mockRooms: Room[] = [
@@ -422,9 +424,7 @@ export const RoomProvider = ({ children }: { children: ReactNode }) => {
       if (!user) throw new Error("You must be logged in to invite users");
       if (!contacts.length) throw new Error("No contacts to invite");
 
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 800));
-
+      // Get the room
       const room = rooms.find(r => r.id === roomId);
       if (!room) throw new Error("Room not found");
 
@@ -436,9 +436,35 @@ export const RoomProvider = ({ children }: { children: ReactNode }) => {
         throw new Error("You don't have permission to invite users to this room");
       }
 
-      // Add new invites (in a real app, this would send emails/texts)
-      // For now, we'll just add IDs to the invitedUsers array
-      // This is a simplified mock where we treat email/phone as user IDs
+      // Prepare invite details
+      const roomUrl = `https://roomloop.com/room/${roomId}`;
+      const subject = `You've been invited to join "${room.title}" on RoomLoop`;
+      const timeWindow = formatDateTimeRangeForInvitation(room.startTime, room.endTime);
+      const message = `${user.username} has invited you to join a room on RoomLoop.
+
+Room: ${room.title}
+Time: ${timeWindow}
+Type: ${room.roomType === 'public' ? 'Public' : 'Private'} Room
+
+Description: 
+${room.description || "No description provided."}
+
+Join here: ${roomUrl}`;
+      
+      // Send notifications to each contact
+      const notificationResults = await Promise.all(
+        contacts.map(contact => 
+          sendNotification(contact, subject, message)
+        )
+      );
+      
+      // Check if any notifications failed
+      const failedContacts = contacts.filter((_, index) => !notificationResults[index]);
+      if (failedContacts.length > 0) {
+        console.warn('Failed to send notifications to:', failedContacts);
+      }
+      
+      // Add new invites to the invitedUsers array (in a real app, we would track pending invites separately)
       const updatedInvites = [...new Set([...room.invitedUsers, ...contacts])];
 
       setRooms(prevRooms => 
@@ -450,9 +476,12 @@ export const RoomProvider = ({ children }: { children: ReactNode }) => {
         )
       );
       
+      const successCount = notificationResults.filter(result => result).length;
       toast({
         title: "Invites sent!",
-        description: `Successfully sent ${contacts.length} invitation${contacts.length > 1 ? 's' : ''}`,
+        description: `Successfully sent ${successCount} invitation${successCount > 1 ? 's' : ''}${
+          failedContacts.length > 0 ? ` (${failedContacts.length} failed)` : ''
+        }`,
       });
       
       return;
