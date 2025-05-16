@@ -1,12 +1,12 @@
-
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { X, Send, Mail, Phone } from "lucide-react";
+import { X, Send, Mail, Phone, Loader2 } from "lucide-react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
+import { useRoom } from "@/contexts/RoomContext";
 
 interface InviteToRoomFormProps {
   roomId: string;
@@ -20,7 +20,20 @@ const InviteToRoomForm = ({ roomId, onInviteSuccess }: InviteToRoomFormProps) =>
   const [inviteValue, setInviteValue] = useState("");
   const [pendingInvites, setPendingInvites] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [inviteProgress, setInviteProgress] = useState(0);
   const { toast } = useToast();
+  const { inviteToRoom } = useRoom();
+
+  const validateEmail = (email: string): boolean => {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email);
+  };
+
+  const validatePhone = (phone: string): boolean => {
+    // Allow formats like: +1234567890, (123) 456-7890, 123-456-7890
+    const regex = /^[0-9\+\-\(\)\s]{10,15}$/;
+    return regex.test(phone);
+  };
 
   const handleAddInvite = () => {
     if (!inviteValue.trim()) {
@@ -29,8 +42,7 @@ const InviteToRoomForm = ({ roomId, onInviteSuccess }: InviteToRoomFormProps) =>
 
     // Validate email format
     if (inviteType === "email") {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(inviteValue)) {
+      if (!validateEmail(inviteValue)) {
         toast({
           title: "Invalid email format",
           description: "Please enter a valid email address",
@@ -40,13 +52,12 @@ const InviteToRoomForm = ({ roomId, onInviteSuccess }: InviteToRoomFormProps) =>
       }
     }
 
-    // Validate phone format (simple validation)
+    // Validate phone format
     if (inviteType === "phone") {
-      const phoneRegex = /^[0-9\+\-\(\)\s]{10,15}$/;
-      if (!phoneRegex.test(inviteValue)) {
+      if (!validatePhone(inviteValue)) {
         toast({
           title: "Invalid phone format",
-          description: "Please enter a valid phone number",
+          description: "Please enter a valid phone number (10-15 digits)",
           variant: "destructive",
         });
         return;
@@ -78,25 +89,38 @@ const InviteToRoomForm = ({ roomId, onInviteSuccess }: InviteToRoomFormProps) =>
     }
 
     setIsLoading(true);
+    setInviteProgress(0);
 
     try {
-      // In a real app, this would be an API call
-      // For now, we'll simulate the API call with a timeout
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
+      // Show a progress toast
+      const progressToastId = Date.now().toString();
       toast({
-        title: "Invites sent!",
-        description: `Successfully sent ${pendingInvites.length} invitation${pendingInvites.length > 1 ? 's' : ''}`,
+        id: progressToastId,
+        title: "Sending invitations...",
+        description: "Please wait while we send your invitations.",
       });
 
+      // Simulate progress updates during invitation sending
+      const progressInterval = setInterval(() => {
+        setInviteProgress(prev => {
+          const newProgress = prev + Math.floor(Math.random() * 20); // Random increment
+          return newProgress > 90 ? 90 : newProgress; // Cap at 90% until complete
+        });
+      }, 300);
+
+      // Use the inviteToRoom function from RoomContext
+      await inviteToRoom(roomId, pendingInvites);
+      
+      // Clear progress interval
+      clearInterval(progressInterval);
+      setInviteProgress(100);
+      
+      // Clear pending invites after successful invitation
       setPendingInvites([]);
       onInviteSuccess();
     } catch (error) {
-      toast({
-        title: "Failed to send invites",
-        description: "Please try again later",
-        variant: "destructive",
-      });
+      // Error is already handled in inviteToRoom function
+      console.error("Failed to send invites:", error);
     } finally {
       setIsLoading(false);
     }
@@ -135,6 +159,18 @@ const InviteToRoomForm = ({ roomId, onInviteSuccess }: InviteToRoomFormProps) =>
           />
           <Button type="button" onClick={handleAddInvite} variant="outline">Add</Button>
         </div>
+
+        {inviteType === "email" && (
+          <p className="text-xs text-muted-foreground">
+            Example: user@example.com
+          </p>
+        )}
+
+        {inviteType === "phone" && (
+          <p className="text-xs text-muted-foreground">
+            Example: +1234567890 or (123) 456-7890
+          </p>
+        )}
       </div>
 
       {pendingInvites.length > 0 && (
@@ -156,8 +192,17 @@ const InviteToRoomForm = ({ roomId, onInviteSuccess }: InviteToRoomFormProps) =>
             disabled={isLoading}
             className="w-full"
           >
-            <Send className="h-4 w-4 mr-2" />
-            {isLoading ? "Sending..." : `Send ${pendingInvites.length} Invite${pendingInvites.length > 1 ? 's' : ''}`}
+            {isLoading ? (
+              <>
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                Sending... {inviteProgress}%
+              </>
+            ) : (
+              <>
+                <Send className="h-4 w-4 mr-2" />
+                Send {pendingInvites.length} Invite{pendingInvites.length > 1 ? 's' : ''}
+              </>
+            )}
           </Button>
         </div>
       )}
