@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
@@ -7,7 +6,7 @@ const Header = () => {
   const { user, logout } = useAuth();
 
   return (
-    <header className="border-b bg-white sticky top-0 z-10">
+    <header className="border-b bg-white sticky top-0 z-10 shadow-sm">
       <div className="container mx-auto flex justify-between items-center py-4 px-4 sm:px-6">
         <div className="flex items-center space-x-2">
           <Link to="/" className="text-2xl font-bold text-primary">
