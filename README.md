@@ -1,73 +1,95 @@
-# Welcome to your Lovable project
+# RoomLoop - Room-Hop-Sessions
 
-## Project info
+A modern, interactive platform for creating and joining temporary rooms for focused collaboration or casual hangouts. RoomLoop enables users to create scheduled sessions, invite participants, and communicate in real-time.
 
-**URL**: https://lovable.dev/projects/8e1c714d-a69d-4f2c-a6b0-389da2e07595
+## Features
 
-## How can I edit this code?
+- **Room Management**: Create, join, and manage rooms with different statuses (live, scheduled, closed)
+- **Real-time Chat**: Communicate with participants through a real-time chat interface
+- **Invitation System**: Invite users via username, email, or phone number
+- **Visual Status Indicators**: Color-coded visual cues to easily identify room status
+- **Responsive Design**: Works beautifully on both desktop and mobile devices
 
-There are several ways of editing your application.
+## UI Enhancements
 
-**Use Lovable**
+The application features a professional, eye-soothing UI with:
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/8e1c714d-a69d-4f2c-a6b0-389da2e07595) and start prompting.
+- **Color-coded Components**: Visual distinctiveness for different room statuses and component types
+- **Animated Interactions**: Subtle animations and hover effects for better user feedback
+- **Consistent Visual Language**: Clean, consistent design patterns throughout the application
+- **Enhanced Chat Experience**: Better visual separation between messages
+- **Accessibility Considerations**: Clear visual hierarchy and readable text
 
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
-
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
+## Technologies Used
 
 This project is built with:
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+- **Vite**: For fast development and optimized production builds
+- **TypeScript**: For type-safe code
+- **React**: For component-based UI development
+- **Tailwind CSS**: For utility-first styling
+- **Radix UI / shadcn-ui**: For accessible UI components
 
-## How can I deploy this project?
+## Getting Started
 
-Simply open [Lovable](https://lovable.dev/projects/8e1c714d-a69d-4f2c-a6b0-389da2e07595) and click on Share -> Publish.
+### Prerequisites
 
-## Can I connect a custom domain to my Lovable project?
+- Node.js & npm - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
 
-Yes, you can!
+### Installation
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+```sh
+# Step 1: Clone the repository
+git clone https://github.com/your-username/room-hop-sessions.git
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+# Step 2: Navigate to the project directory
+cd room-hop-sessions
+
+# Step 3: Install dependencies
+npm install
+
+# Step 4: Start the development server
+npm run dev
+```
+
+## Application Structure
+
+- `/src/components`: Reusable UI components
+- `/src/contexts`: React context providers for state management
+- `/src/lib`: Utility functions and services
+- `/src/pages`: Application pages
+- `/src/types`: TypeScript type definitions
+
+## Development
+
+### Running Tests
+
+```sh
+npm test
+```
+
+### Building for Production
+
+```sh
+npm run build
+```
+
+### Deployment
+
+The application can be deployed to any static site hosting service like Vercel, Netlify, or GitHub Pages.
+
+```sh
+# Example deployment to Vercel
+npm install -g vercel
+vercel
+```
+
+## Contributing
+
+Contributions are welcome! Feel free to open issues or submit pull requests to improve the application.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
