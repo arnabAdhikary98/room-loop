@@ -1,4 +1,3 @@
-
 import { useState, FormEvent, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -34,38 +33,38 @@ const ChatBox = ({ messages, onSendMessage, isLive }: ChatBoxProps) => {
   }, [messages]);
 
   return (
-    <div className="flex flex-col h-full border rounded-md overflow-hidden bg-white">
-      <div className="p-3 border-b bg-muted/20">
-        <h3 className="font-medium">Room Chat</h3>
+    <div className="flex flex-col h-full border rounded-md overflow-hidden bg-white shadow-sm transition-all duration-300 hover:shadow-md">
+      <div className="p-2 border-b bg-accent">
+        <h3 className="font-medium text-sm">Room Chat</h3>
       </div>
       
-      <ScrollArea className="flex-1 p-3" ref={scrollAreaRef}>
+      <ScrollArea className="flex-1 p-2" ref={scrollAreaRef}>
         {messages.length === 0 ? (
-          <div className="flex items-center justify-center h-full text-center p-4">
-            <p className="text-muted-foreground text-sm">
+          <div className="flex items-center justify-center h-full text-center p-2">
+            <p className="text-muted-foreground text-xs">
               {isLive 
                 ? "No messages yet. Start the conversation!" 
                 : "This room has no messages."}
             </p>
           </div>
         ) : (
-          <div className="space-y-4">
+          <div className="space-y-3">
             {messages.map((msg) => (
               <div 
                 key={msg.id} 
                 className={`flex flex-col ${msg.userId === user?.id ? 'items-end' : 'items-start'}`}
               >
                 <div 
-                  className={`px-3 py-2 rounded-lg max-w-[85%] ${
+                  className={`px-3 py-2 rounded-lg max-w-[90%] transition-all duration-300 hover:shadow-sm ${
                     msg.userId === user?.id 
-                      ? 'bg-primary text-primary-foreground' 
-                      : 'bg-muted'
+                      ? 'bg-primary text-primary-foreground rounded-br-none' 
+                      : 'bg-muted rounded-bl-none border-l-4 border-l-secondary'
                   }`}
                 >
                   <p className="text-sm">{msg.content}</p>
                 </div>
-                <div className="flex items-center mt-1 gap-2">
-                  <span className="text-xs text-muted-foreground">
+                <div className="flex items-center mt-1 gap-1 px-1">
+                  <span className={`text-xs font-medium ${msg.userId === user?.id ? 'text-primary' : 'text-secondary'}`}>
                     {msg.username}
                   </span>
                   <span className="text-xs text-muted-foreground">
@@ -79,18 +78,21 @@ const ChatBox = ({ messages, onSendMessage, isLive }: ChatBoxProps) => {
         )}
       </ScrollArea>
       
-      <form onSubmit={handleSubmit} className="p-3 border-t">
-        <div className="flex gap-2">
+      <form onSubmit={handleSubmit} className="p-2 border-t bg-muted/30">
+        <div className="flex gap-1">
           <Input
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             placeholder={isLive ? "Type a message..." : "Room is not active"}
             disabled={!isLive}
-            className="flex-1"
+            className="flex-1 text-sm h-8 transition-all focus:shadow-sm"
           />
           <Button 
             type="submit" 
-            disabled={!isLive || !message.trim()}>
+            disabled={!isLive || !message.trim()}
+            size="sm"
+            className="h-8 transition-all hover:shadow-sm"
+          >
             Send
           </Button>
         </div>
