@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -49,7 +48,13 @@ const RoomCard = ({ room, showJoin = true }: RoomCardProps) => {
   };
 
   return (
-    <Card className={`room-card ${room.status} transition-all hover:shadow-md`}>
+    <Card className={`room-card ${room.status} transition-all duration-300 hover:shadow-lg hover:translate-y-[-4px] border-l-4 ${
+      room.status === 'live' 
+        ? 'border-l-room-live bg-green-50' 
+        : room.status === 'scheduled' 
+        ? 'border-l-room-scheduled bg-blue-50' 
+        : 'border-l-room-closed bg-gray-50'
+    }`}>
       <CardHeader className="pb-2">
         <div className="flex justify-between items-start">
           <Badge
@@ -95,7 +100,7 @@ const RoomCard = ({ room, showJoin = true }: RoomCardProps) => {
         {showJoin ? (
           canJoin && room.status === 'live' ? (
             <Button 
-              className="w-full" 
+              className="w-full transition-all duration-300 hover:shadow-md" 
               variant={isParticipant ? "outline" : "default"}
               onClick={handleJoin}
             >
@@ -103,7 +108,7 @@ const RoomCard = ({ room, showJoin = true }: RoomCardProps) => {
             </Button>
           ) : isCreator && room.status === 'scheduled' ? (
             <Button 
-              className="w-full"
+              className="w-full transition-all duration-300 hover:shadow-md"
               variant="outline"
               onClick={handleViewRoom}
             >
@@ -111,7 +116,7 @@ const RoomCard = ({ room, showJoin = true }: RoomCardProps) => {
             </Button>
           ) : (
             <Button 
-              className="w-full" 
+              className="w-full transition-all duration-300 hover:shadow-md" 
               variant="outline"
               onClick={handleViewRoom}
               disabled={room.status === 'scheduled' && !isCreator}
