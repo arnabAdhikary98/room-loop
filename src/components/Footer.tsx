@@ -1,9 +1,8 @@
-
 import { Link } from "react-router-dom";
 
 const Footer = () => {
   return (
-    <footer className="border-t bg-muted/20 mt-auto">
+    <footer className="border-t bg-accent mt-auto">
       <div className="container mx-auto py-6 px-4 md:px-6">
         <div className="flex flex-col md:flex-row justify-between items-center">
           <div className="mb-4 md:mb-0">
