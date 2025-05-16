@@ -85,3 +85,35 @@ export const isRoomLive = (startTime: string, endTime: string): boolean => {
   
   return now >= start && now <= end;
 };
+
+/**
+ * Formats a date range for display in invitations in a Windows-friendly format
+ * @param startTime ISO date string for start time
+ * @param endTime ISO date string for end time
+ * @returns Formatted date range string
+ */
+export const formatDateTimeRangeForInvitation = (startTime: string, endTime: string): string => {
+  const options: Intl.DateTimeFormatOptions = { 
+    year: 'numeric', 
+    month: 'short', 
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true
+  };
+  
+  const start = new Date(startTime);
+  const end = new Date(endTime);
+  
+  // If same day
+  if (start.toDateString() === end.toDateString()) {
+    return `${start.toLocaleDateString('en-US', options)} - ${end.toLocaleTimeString('en-US', { 
+      hour: 'numeric', 
+      minute: '2-digit',
+      hour12: true 
+    })}`;
+  }
+  
+  // Different days
+  return `${start.toLocaleDateString('en-US', options)} - ${end.toLocaleDateString('en-US', options)}`;
+};
