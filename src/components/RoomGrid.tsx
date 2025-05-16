@@ -1,25 +1,32 @@
-
 import { Room } from "@/types";
-import RoomCard from "./RoomCard";
+import RoomCard from "@/components/RoomCard";
 
 interface RoomGridProps {
   rooms: Room[];
-  emptyMessage?: string;
 }
 
-const RoomGrid = ({ rooms, emptyMessage = "No rooms found" }: RoomGridProps) => {
-  if (rooms.length === 0) {
+const RoomGrid = ({ rooms }: RoomGridProps) => {
+  if (!rooms.length) {
     return (
-      <div className="flex items-center justify-center p-8 text-center">
-        <p className="text-muted-foreground">{emptyMessage}</p>
+      <div className="text-center p-6 border border-dashed rounded-lg bg-accent/50">
+        <p className="text-muted-foreground">No rooms found</p>
       </div>
     );
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-      {rooms.map((room) => (
-        <RoomCard key={room.id} room={room} />
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {rooms.map((room, index) => (
+        <div 
+          key={room.id} 
+          className={`animate-fade-in opacity-0`}
+          style={{ 
+            animationDelay: `${index * 100}ms`,
+            animationFillMode: 'forwards' 
+          }}
+        >
+          <RoomCard room={room} />
+        </div>
       ))}
     </div>
   );

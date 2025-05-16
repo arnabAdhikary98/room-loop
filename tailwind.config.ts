@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -63,11 +62,11 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				// RoomLoop custom colors
+				// RoomLoop custom colors - professional palette
 				room: {
-					scheduled: '#9b87f5',
-					live: '#8B5CF6',
-					closed: '#7E69AB',
+					scheduled: '#4C7AE5', // Blue for scheduled
+					live: '#3AAA55',      // Green for live
+					closed: '#8C8C9E',    // Grey for closed
 				}
 			},
 			borderRadius: {
@@ -98,13 +97,30 @@ export default {
 					'0%': { opacity: '0.9' },
 					'50%': { opacity: '1' },
 					'100%': { opacity: '0.9' }
+				},
+				'float': {
+					'0%': { transform: 'translateY(0px)' },
+					'50%': { transform: 'translateY(-5px)' },
+					'100%': { transform: 'translateY(0px)' }
+				},
+				'glow': {
+					'0%': { boxShadow: '0 0 5px rgba(76, 122, 229, 0.3)' },
+					'50%': { boxShadow: '0 0 15px rgba(76, 122, 229, 0.5)' },
+					'100%': { boxShadow: '0 0 5px rgba(76, 122, 229, 0.3)' }
+				},
+				'slide-right': {
+					'0%': { transform: 'translateX(-10px)', opacity: '0' },
+					'100%': { transform: 'translateX(0)', opacity: '1' }
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
 				'fade-in': 'fade-in 0.3s ease-out',
-				'pulse-subtle': 'pulse-subtle 2s ease-in-out infinite'
+				'pulse-subtle': 'pulse-subtle 2s ease-in-out infinite',
+				'float': 'float 3s ease-in-out infinite',
+				'glow': 'glow 2s ease-in-out infinite',
+				'slide-right': 'slide-right 0.3s ease-out'
 			}
 		}
 	},
